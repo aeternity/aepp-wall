@@ -1,0 +1,19 @@
+{
+  "name": "aepp-wall",
+  "version": "0.0.1",
+  "description": "Message wall for aeternity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev-server": "NODE_ENV=local node-dev server/server.js"
+  },
+  "author": "Max Dörfler <max@apeunit.com> (https://github.com/muxe)",
+  "license": "MIT",
+  "dependencies": {
+    "ethereum-input-data-decoder": "0.0.3",
+    "etherscan-api": "3.0.11",
+    "express": "4.15.5",
+    "lodash": "^4.17.4",
+    "web3": "1.0.0-beta.22"
+  }
+}
