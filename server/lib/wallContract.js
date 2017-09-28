@@ -1,7 +1,7 @@
-const Web3 = require('web3');
+const InputDataDecoder = require('ethereum-input-data-decoder');
 const config = require('../config');
 
-let web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
+const web3 = require('./web3');
 
 const contractAddress = config.contractAddress;
 const contractJson = require('../../contract/build/contracts/AeternityWall.json');
@@ -35,5 +35,12 @@ module.exports = {
 				return callback(event);
 			}
 		});
+	},
+	decodeInput: function(input) {
+		const decoder = new InputDataDecoder(contractJson.abi);
+		return decoder.decodeData(input);
+	},
+	getTransaction: async function(txId) {
+		return await web3.eth.getTransaction(txId);
 	}
 };

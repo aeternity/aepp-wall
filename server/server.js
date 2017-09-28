@@ -1,10 +1,11 @@
 const express = require('express');
 const config = require('./config');
 const watcher = require('./lib/watcher');
+const database = require('./lib/database');
 const app = express();
 
 watcher.start(event => {
-	console.log('got event', event);
+	console.log('got event');
 });
 
 app.all('/', async function(req, res, next) {

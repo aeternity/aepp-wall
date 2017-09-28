@@ -4,7 +4,11 @@ var defaults = {
 	'port': 3000,
 	'etherscanKey': '',
 	'contractAddress': '0xd2f3687e7d22ba9390a12d6ab56379e314ed06a0',
-	'fromAddress': ''
+	'fromAddress': '',
+	'database': 'mongodb://localhost:27017/aepp-wall',
+	'database_options' : {
+		useMongoClient: true
+	}
 };
 
 function safeRequire(path) {

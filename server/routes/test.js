@@ -1,6 +1,7 @@
 const express = require('express');
 const etherscanApi = require('../lib/etherscanApi');
 const wallContract = require('../lib/wallContract');
+const Message = require('../models/message');
 const router = express.Router();
 
 router.all('/', function(req, res, next) {
@@ -30,8 +31,7 @@ router.all('/store/:key/:value', async function(req, res, next) {
 });
 
 router.all('/pastEvents', async function(req, res, next) {
-	let result = await wallContract.getPastEvents();
-	// wallContract.getPastEvents();
+	let result = await Message.importPast();
 	return res.json({
 		success: true,
 		result: result,

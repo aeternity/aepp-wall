@@ -14,6 +14,7 @@
     "etherscan-api": "3.0.11",
     "express": "4.15.5",
     "lodash": "^4.17.4",
+    "mongoose": "4.11.13",
     "web3": "1.0.0-beta.22"
   }
 }
