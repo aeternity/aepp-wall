@@ -27,6 +27,10 @@ const MessageSchema = new mongoose.Schema(
 	}
 );
 
+MessageSchema.statics.findList = async function() {
+	return await this.find().sort({blockNumber: -1}).limit(50);
+};
+
 MessageSchema.statics.getByTxId = async function(txId) {
 	let message = await this.findOne({transactionId: txId});
 	return message;
