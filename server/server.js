@@ -8,15 +8,23 @@ watcher.start(event => {
 	console.log('got event');
 });
 
-app.all('/', async function(req, res, next) {
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
+
+app.all('/api/', async function(req, res, next) {
 	return res.json({
 		success: true,
 		message: 'Hello Aeternity Wall API',
 	});
 });
 
-app.use('/messages', require('./routes/messages'));
-app.use('/test', require('./routes/test'));
+app.use('/api/messages', require('./routes/messages'));
+app.use('/api/test', require('./routes/test'));
+
+app.use(express.static('dist'));
 
 // ---------------- 404 Error Handler ----------------
 

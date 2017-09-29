@@ -5,6 +5,7 @@ var defaults = {
 	'etherscanKey': '',
 	'contractAddress': '0xd2f3687e7d22ba9390a12d6ab56379e314ed06a0',
 	'fromAddress': '',
+	'rpcUrl': 'http://165.227.130.103:18545',
 	'database': 'mongodb://localhost:27017/aepp-wall',
 	'database_options' : {
 		useMongoClient: true
