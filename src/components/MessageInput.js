@@ -10,7 +10,6 @@ export default {
 			this.sendMessage(this.currentInput);
 		},
 		async sendMessage(messageText) {
-			console.log('would send message', messageText);
 			let Contract = window.globalContract;
 			let from = this.$store.state.identity.address;
 			if (Contract) {

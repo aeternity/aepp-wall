@@ -18,6 +18,10 @@ const MessageSchema = new mongoose.Schema(
 			type: Number,
 			required: true
 		},
+		blockTimestamp: {
+			type: Number,
+			required: true
+		},
 		transaction: {
 			type: Object
 		},
@@ -36,17 +40,17 @@ MessageSchema.statics.getByTxId = async function(txId) {
 	return message;
 };
 
-MessageSchema.statics.add = async function(transaction) {
+MessageSchema.statics.add = async function(transaction, block, value) {
 	let Message = this;
 
 	let sender = transaction.from;
 	let transactionId = transaction.hash;
 	let blockNumber = transaction.blockNumber;
-	let content = wallContract.decodeInput(transaction.input);
+	let blockTimestamp = block.timestamp;
+	let content = value;
 
 	let existingMessage = await this.getByTxId(transactionId);
 	if (existingMessage) {
-		console.log(existingMessage);
 		return null;
 	}
 
@@ -55,21 +59,11 @@ MessageSchema.statics.add = async function(transaction) {
 		content: content,
 		transactionId: transactionId,
 		transaction: transaction,
-		blockNumber: blockNumber
+		blockNumber: blockNumber,
+		blockTimestamp: blockTimestamp
 	};
 	let newMessage = new Message(messageData);
-	return newMessage.save();
+	return await newMessage.save();
 };
-
-MessageSchema.statics.importPast = async function() {
-	let pastEvents = await wallContract.getPastEvents();
-	let imported = [];
-	for (let event of pastEvents) {
-		let transaction = await wallContract.getTransaction(event.transactionHash);
-		let storedMessage = await this.add(transaction);
-		imported.push(storedMessage);
-	}
-	return imported;
-}
 
 module.exports = mongoose.model('Message', MessageSchema);

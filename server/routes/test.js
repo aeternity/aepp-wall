@@ -2,6 +2,7 @@ const express = require('express');
 const etherscanApi = require('../lib/etherscanApi');
 const wallContract = require('../lib/wallContract');
 const Message = require('../models/message');
+const Event = require('../models/event');
 const router = express.Router();
 
 router.all('/', function(req, res, next) {
@@ -21,21 +22,25 @@ router.all('/balance/:account', async function(req, res, next) {
 	});
 });
 
-router.all('/store/:key/:value', async function(req, res, next) {
-	//this will later be called from frontend
-	let result = await wallContract.store(req.params.key, req.params.value);
-	return res.json({
-		success: true,
-		result: result,
-	});
-});
+// router.all('/store/:key/:value', async function(req, res, next) {
+// 	//this will later be called from frontend
+// 	let result = await wallContract.store(req.params.key, req.params.value);
+// 	return res.json({
+// 		success: true,
+// 		result: result,
+// 	});
+// });
 
 router.all('/pastEvents', async function(req, res, next) {
-	let result = await Message.importPast();
-	return res.json({
-		success: true,
-		result: result,
-	});
+	try {
+		let result = await Event.importPast();
+		return res.json({
+			success: true,
+			result: result,
+		});
+	} catch (err) {
+		return next(err);
+	}
 });
 
 router.all('/error', function(req, res, next) {

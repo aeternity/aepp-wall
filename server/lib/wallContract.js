@@ -23,24 +23,34 @@ module.exports = {
 		});
 		return result;
 	},
+
 	getPastEvents: async function() {
 		return await Contract.getPastEvents('Stored', {
 			fromBlock: 0,
 			toBlock: 'latest'
 		});
 	},
+
 	subscribe: function(callback) {
 		Contract.events.Stored((err, event) => {
-			if (!err) {
+			if (err) {
+				console.log('subscribe', err);
+			} else {
 				return callback(event);
 			}
 		});
 	},
+
 	decodeInput: function(input) {
 		const decoder = new InputDataDecoder(contractJson.abi);
 		return decoder.decodeData(input);
 	},
+
 	getTransaction: async function(txId) {
 		return await web3.eth.getTransaction(txId);
+	},
+	
+	getBlock: async function(blockNumber) {
+		return await web3.eth.getBlock(blockNumber);
 	}
 };

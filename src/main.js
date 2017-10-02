@@ -4,7 +4,6 @@ import App from './App.vue'
 import VueResource from 'vue-resource'
 //TODO: Critical dependency: the request of a dependency is an expression
 import ServerConfig from '../server/config'
-// const ServerConfig = require('../server/config');
 
 Vue.use(VueResource)
 Vue.use(Vuex)

@@ -11,11 +11,15 @@ router.all('/', function(req, res, next) {
 });
 
 router.all('/list', async function(req, res, next) {
-	let messages = await Message.findList();
-	return res.json({
-		success: true,
-		messages: messages
-	});
+	try {
+		let messages = await Message.findList();
+		return res.json({
+			success: true,
+			messages: messages
+		});
+	} catch (err) {
+		return next(err);
+	}
 });
 
 module.exports = router;
