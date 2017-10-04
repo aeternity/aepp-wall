@@ -3,9 +3,10 @@ const Message = require('./message');
 
 let importPast = async function() {
 	let pastEvents = await wallContract.getPastEvents();
+	console.log('pastEvents', pastEvents);
 	let imported = [];
 	for (let event of pastEvents) {
-		let result = await this.handleEvent(event);
+		let result = await handleEvent(event);
 		if (result) {
 			imported.push(result);
 		}
@@ -14,6 +15,24 @@ let importPast = async function() {
 };
 
 let handleEvent = async function(event) {
+	switch (event.event) {
+		case 'Approval':
+			return await handleApprovalEvent(event);
+		case 'Stored':
+			return await handleStoredEvent(event);
+	}
+	return null;
+};
+
+let handleApprovalEvent = async function(event) {
+	let txId = event.transactionHash;
+	let transaction = await wallContract.getTransaction(txId);
+	let block = await wallContract.getBlock(transaction.blockNumber);
+	let content = wallContract.decodeInput(transaction.input);
+	console.log(transaction, content);
+}
+
+let handleStoredEvent = async function(event) {
 	let txId = event.transactionHash;
 	let transaction = await wallContract.getTransaction(txId);
 	let block = await wallContract.getBlock(transaction.blockNumber);
@@ -35,5 +54,7 @@ let handleMessageEvent = async function(transaction, block, value) {
 
 module.exports = {
 	importPast: importPast,
-	handleEvent: handleEvent
+	handleEvent: handleEvent,
+	handleApprovalEvent: handleApprovalEvent,
+	handleStoredEvent: handleStoredEvent
 };

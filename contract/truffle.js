@@ -1,6 +1,3 @@
-// console.log('lel');
-// const config = require('../server/config');
-// console.log(config);
 
 module.exports = {
   networks: {

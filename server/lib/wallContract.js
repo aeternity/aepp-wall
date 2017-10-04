@@ -25,7 +25,7 @@ module.exports = {
 	},
 
 	getPastEvents: async function() {
-		return await Contract.getPastEvents('Stored', {
+		return await Contract.getPastEvents('allEvents', {
 			fromBlock: 0,
 			toBlock: 'latest'
 		});
@@ -49,7 +49,7 @@ module.exports = {
 	getTransaction: async function(txId) {
 		return await web3.eth.getTransaction(txId);
 	},
-	
+
 	getBlock: async function(blockNumber) {
 		return await web3.eth.getBlock(blockNumber);
 	}
