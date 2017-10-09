@@ -5,7 +5,7 @@ const database = require('./lib/database');
 const app = express();
 
 watcher.start((err, event) => {
-	console.log('got event');
+	console.log('got event', event);
 });
 
 app.use(function(req, res, next) {

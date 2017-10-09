@@ -14,14 +14,14 @@ export default {
 			let from = this.$store.state.identity.address;
 			if (Contract) {
 				try {
-					let method = Contract.methods.store('message', messageText);
-					let estimate = await method.estimateGas({
-						from: from
-					});
-					console.log('estimate', estimate);
+					let method = Contract.methods.paint(messageText);
+					//let estimate = await method.estimateGas({
+						//from: from
+					//});
+					//console.log('estimate', estimate);
 					let result = await method.send({
 						from: from,
-						gas: estimate,
+						gas: 1000000,
 						gasPrice: 2000000000
 					});
 				} catch (e) {

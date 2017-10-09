@@ -4,7 +4,7 @@ const config = require('../config');
 const web3 = require('./web3');
 
 const contractAddress = config.contractAddress;
-const contractJson = require('../../contract/build/contracts/AeternityWall.json');
+const contractJson = require('../../contract/build/contracts/AEWall.json');
 const Contract = new web3.eth.Contract(contractJson.abi, contractAddress);
 
 module.exports = {
@@ -32,7 +32,7 @@ module.exports = {
 	},
 
 	subscribe: function(callback) {
-		Contract.events.Stored((err, event) => {
+		Contract.events.Create((err, event) => {
 			if (err) {
 				console.log('subscribe', err);
 			} else {

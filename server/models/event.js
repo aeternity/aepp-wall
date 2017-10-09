@@ -1,5 +1,6 @@
 const wallContract = require('../lib/wallContract');
 const Message = require('./message');
+const _ = require('lodash');
 
 let importPast = async function() {
 	let pastEvents = await wallContract.getPastEvents();
@@ -15,11 +16,12 @@ let importPast = async function() {
 };
 
 let handleEvent = async function(event) {
+	console.log('handleEvent', event);
 	switch (event.event) {
 		case 'Approval':
 			return await handleApprovalEvent(event);
-		case 'Stored':
-			return await handleStoredEvent(event);
+		case 'Create':
+			return await handleCreateEvent(event);
 	}
 	return null;
 };
@@ -32,18 +34,16 @@ let handleApprovalEvent = async function(event) {
 	console.log(transaction, content);
 }
 
-let handleStoredEvent = async function(event) {
+let handleCreateEvent = async function(event) {
 	let txId = event.transactionHash;
 	let transaction = await wallContract.getTransaction(txId);
 	let block = await wallContract.getBlock(transaction.blockNumber);
-	let content = wallContract.decodeInput(transaction.input);
 
-	if (content && content.inputs && content.inputs.length == 2) {
-		switch (content.inputs[0]) {
-			case 'message':
-				return await handleMessageEvent(transaction, block, content.inputs[1]);
-				break;
-		}
+	console.log('handleCreateEvent');
+	console.log(event.returnValues);
+	console.log(typeof event.returnValues);
+	if (event.returnValues) {
+		return await handleMessageEvent(transaction, block, _.pick(event.returnValues, ['_artist', 'message', '_id']));
 	}
 };
 
@@ -56,5 +56,5 @@ module.exports = {
 	importPast: importPast,
 	handleEvent: handleEvent,
 	handleApprovalEvent: handleApprovalEvent,
-	handleStoredEvent: handleStoredEvent
+	handleCreateEvent: handleCreateEvent
 };

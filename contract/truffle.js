@@ -8,9 +8,8 @@ module.exports = {
     },
     kovan: {
       network_id: 42,
-      host: "localhost",
-      port: 8545,
-      from: '0x429E2ff164D9f48CC27b505Be097504B00F29995'
+      host: "192.168.99.100",
+      port: 8545
     }
   }
 };

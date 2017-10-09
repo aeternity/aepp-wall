@@ -16,11 +16,12 @@ export default {
 	},
 	methods: {
 		initWeb3: function() {
-			if (typeof web3 !== 'undefined') {
-				web3 = new Web3(web3.currentProvider);
+			let web3;
+			if (typeof window.web3 !== 'undefined') {
+				web3 = new Web3(window.web3.currentProvider);
 			} else {
-				web3 = null;
-				// web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+				//web3 = null;
+				web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 			}
 			if (web3) {
 				window.globalWeb3 = web3;
@@ -59,6 +60,7 @@ export default {
 		this.$store.dispatch('getMessagesFromApi', this.$http);
 
 		window.addEventListener('load', () => {
+			console.log('initWeb3');
 			this.initWeb3();
 		});
 	}
