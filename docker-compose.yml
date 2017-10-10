@@ -5,3 +5,10 @@ services:
     command: mongod --storageEngine=wiredTiger
     ports:
       - "27017:27017"
+  ethereum:
+    build: ./parity/
+    environment:
+      - CHAIN=kovan
+    ports:
+      - "18545:8545"
+      - "18546:8546"
