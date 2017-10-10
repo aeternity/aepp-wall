@@ -5,7 +5,7 @@ var defaults = {
 	'etherscanKey': '',
 	// 'contractAddress': '0xd2f3687e7d22ba9390a12d6ab56379e314ed06a0', // without like
 	//'contractAddress': '0xbdb60f5a4cd3ca36668404a89b691e7d57589076', // with like
-	'contractAddress': '0xaa1c279ef1d96ad64e59d2cd5fa474a33ceb053f',
+	'contractAddress': '0xb28251ac47d063b967ba4422c7e58a06ddb3a908',
 	//'tokenContractAddress': '0xcac408fae73b6310a5bcbdc12deb0b3d02a16fb5',
 	'tokenContractAddress': '0x35d8830ea35e6Df033eEdb6d5045334A4e34f9f9',
 	'fromAddress': '',

@@ -32,9 +32,9 @@ export default {
 
 		initContract: function(web3) {
 			window.globalContract = new WallContract(web3, this.$store.state.contractAddress);
+			window.globalTokenContract = new web3.eth.Contract(this.$store.state.tokenContractABI, this.$store.state.tokenContractAddress);
 			console.log(window.globalContract);
 		},
-
 		setAcountInterval: function(web3) {
 			setInterval(async () => {
 				if (web3) {

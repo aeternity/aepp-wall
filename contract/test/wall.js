@@ -1,5 +1,5 @@
 const AEWall = artifacts.require("./AEWall.sol")
-const Token = artifacts.require("./Token.sol")
+const TestToken = artifacts.require("./TestToken.sol")
 const abi = require('ethereumjs-abi')
 const web3 = require('web3')
 
@@ -11,7 +11,7 @@ contract('AEWall', function(accounts) {
 	const fan = accounts[1]
 
 	beforeEach(async () => {
-		token = await Token.deployed()
+		token = await TestToken.deployed()
 		wall = await AEWall.deployed()
 	})
 

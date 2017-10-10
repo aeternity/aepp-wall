@@ -18,20 +18,19 @@ let importPast = async function() {
 let handleEvent = async function(event) {
 	console.log('handleEvent', event);
 	switch (event.event) {
-		case 'Approval':
-			return await handleApprovalEvent(event);
+		case 'Like':
+			return await handleLikeEvent(event);
 		case 'Create':
 			return await handleCreateEvent(event);
 	}
 	return null;
 };
 
-let handleApprovalEvent = async function(event) {
+let handleLikeEvent = async function(event) {
 	let txId = event.transactionHash;
 	let transaction = await wallContract.getTransaction(txId);
 	let block = await wallContract.getBlock(transaction.blockNumber);
-	let content = wallContract.decodeInput(transaction.input);
-	console.log(transaction, content);
+	console.log('handleLikeEvent', event.returnValues);
 }
 
 let handleCreateEvent = async function(event) {
@@ -39,9 +38,6 @@ let handleCreateEvent = async function(event) {
 	let transaction = await wallContract.getTransaction(txId);
 	let block = await wallContract.getBlock(transaction.blockNumber);
 
-	console.log('handleCreateEvent');
-	console.log(event.returnValues);
-	console.log(typeof event.returnValues);
 	if (event.returnValues) {
 		return await handleMessageEvent(transaction, block, _.pick(event.returnValues, ['_artist', 'message', '_id']));
 	}
@@ -55,6 +51,6 @@ let handleMessageEvent = async function(transaction, block, value) {
 module.exports = {
 	importPast: importPast,
 	handleEvent: handleEvent,
-	handleApprovalEvent: handleApprovalEvent,
+	handleLikeEvent: handleLikeEvent,
 	handleCreateEvent: handleCreateEvent
 };

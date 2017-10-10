@@ -67,11 +67,10 @@ contract AEWall {
 	  // We only care about the first 20 bytes, which should hold our address.
 		require(_extraData.length >= 20);
 		address _artist = 0x0;
-		require(tokenFallback(_token).transferFrom(_from, _token, _amount));
 		assembly {
 			_artist := mload(add(_extraData, 0x14))
 		}
-		require(tokenFallback(_token).transfer(_artist, _amount));
+		require(tokenFallback(_token).transferFrom(_from, _artist, _amount));
 		Like(_from, _amount, _artist);
 		return true;
 	}
