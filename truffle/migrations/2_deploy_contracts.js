@@ -1,3 +1,7 @@
 /* global artifacts */
 
-module.exports = () => {};
+const Wall = artifacts.require('Wall');
+
+module.exports = (deployer) => {
+  deployer.deploy(Wall);
+};
