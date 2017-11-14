@@ -1,7 +1,7 @@
 <template>
   <ae-panel v-if="record" :closeHandler="close">
     <div class="record-detail">
-      <span class="author">by {{record.author}}</span>
+      <span class="author">by {{record.author.slice(0, 8)}}</span>
       <h2>{{record.title}}</h2>
       <text-muted>{{record.createdAt | moment('calendar')}}</text-muted>
       <ae-hr />
@@ -13,7 +13,7 @@
       </ae-hr-button>
       <table v-if="supportersVisible">
         <tr v-for="supporter in record.lastSupporters">
-          <td>{{supporter.address}}</td>
+          <td>{{supporter.address.slice(0, 8)}}</td>
           <td><text-muted>{{supporter.createdAt | moment('calendar')}}</text-muted></td>
           <td>{{supporter.amount}} Æ</td>
         </tr>
@@ -47,7 +47,7 @@
         this.$router.push(this.$store.state.route.from.path);
       },
       showSupportModal() {
-        this.$store.commit('showSupportModalForRecord', +this.id);
+        this.$store.commit('showSupportModalForRecord', this.id);
       },
       toggleSupporters() {
         this.supportersVisible = !this.supportersVisible;

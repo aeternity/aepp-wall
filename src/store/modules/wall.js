@@ -1,54 +1,42 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign, no-console */
 
 import Vue from 'vue';
+import Web3 from 'web3';
+import BigNumber from 'bignumber.js';
+import WallMeta from '../../../truffle/build/contracts/Wall.json';
 
-const randomData = () =>
-  new Date(Date.now() - Math.round((Math.random() * 1000 * 60 * 60 * 24 * 360)));
-const randomAddress = () => `0x${''.padStart(6, Math.random().toString(16).slice(2))}`;
-const randomSupporters = () => (new Array(5)).fill().map(() => ({
-  address: randomAddress(),
-  createdAt: randomData(),
-  amount: (Math.random() * 50).toFixed(2),
-}));
+const decimals = 18;
+const defaultRecord = () => ({
+  revenue: 0,
+  supporters: new Set(),
+  lastSupporters: [],
+  likeIds: new Set(),
+  title: '',
+  body: '',
+  author: '',
+  createdAt: 0,
+});
+const web3 = new Web3();
+let wall;
 
 export default {
   state: () => ({
+    account: null,
+    blockNumber: 0,
     createRecordModalShown: false,
     supportModalRecord: false,
-    address: randomAddress(),
 
-    records: {
-      1: {
-        title: '10 things that you can do with your Æ Tokens!',
-        body: 'Example body',
-        revenue: 1201,
-        supporters: new Set([]),
-        author: randomAddress(),
-        createdAt: randomData(),
-        lastSupporters: randomSupporters(),
-      },
-      2: {
-        title: 'I developed a script that automatically trades BTC, … ETH or $?',
-        body: 'Example body',
-        revenue: 1200,
-        supporters: new Set([1, 2, 3, 4]),
-        author: randomAddress(),
-        createdAt: randomData(),
-        lastSupporters: randomSupporters(),
-      },
-      3: {
-        title: 'Example wall record',
-        body: 'Example body',
-        revenue: 1200,
-        supporters: new Set([1, 4]),
-        author: randomAddress(),
-        createdAt: new Date(),
-        lastSupporters: randomSupporters(),
-      },
-    },
+    records: {},
   }),
 
   mutations: {
+    setAccount(state, account) {
+      state.account = account;
+    },
+    setBlockNumber(state, blockNumber) {
+      if (blockNumber < state.blockNumber) return;
+      state.blockNumber = blockNumber;
+    },
     toggleCreateRecordModal(state) {
       state.createRecordModalShown = !state.createRecordModalShown;
     },
@@ -56,36 +44,100 @@ export default {
       state.supportModalRecord = address;
     },
     setRecord(state, record) {
-      const defaultRecord = {
-        revenue: 0,
-        supporters: new Set(),
-        author: state.address,
-        createdAt: new Date(),
-      };
-      Vue.set(state.records, record.id, Object.assign(defaultRecord, record));
+      Vue.set(state.records, record.id, {
+        ...defaultRecord(),
+        ...state.records[record.id],
+        ...record,
+      });
     },
-    likeRecord(state, { recordId, supporterAddress, revenue }) {
-      const newRevenue = state.records[recordId].revenue + revenue;
-      Vue.set(state.records[recordId], 'revenue', newRevenue);
-      state.records[recordId].supporters.add(supporterAddress);
+    likeRecord(state, { id, recordId, supporterAddress, amount, createdAt }) {
+      if (!state.records[recordId]) Vue.set(state.records, recordId, defaultRecord());
+      const { revenue, likeIds, supporters, lastSupporters } = state.records[recordId];
+      if (likeIds.has(id)) return;
+      likeIds.add(id);
+      supporters.add(supporterAddress);
+      state.records[recordId].revenue = revenue + amount;
+      lastSupporters.push({ address: supporterAddress, createdAt, amount });
+      lastSupporters.sort((a, b) => b.createdAt - a.createdAt);
+      lastSupporters.splice(5);
     },
   },
 
   actions: {
-    createRecord({ commit, state }, { title, body }) {
-      commit('setRecord', {
-        id: Math.random().toString(16).slice(2),
-        title,
-        body,
-        revenue: 0,
-        supporters: new Set(),
-        author: state.address,
-        createdAt: new Date(),
+    async fetchLastEvents({ state, commit }) {
+      wall.Store({}, { fromBlock: state.blockNumber + 1 }, (error, event) => {
+        console.log('store', error, event);
+        if (error) throw error;
+        commit('setBlockNumber', event.blockNumber);
+        const { transactionHash, args: { account, content, createdAt } } = event;
+        const p = content.indexOf('\n');
+        commit('setRecord', {
+          id: transactionHash,
+          author: account,
+          title: content.slice(0, p),
+          body: content.slice(p + 1),
+          createdAt: createdAt * 1000,
+        });
       });
-      commit('toggleCreateRecordModal');
+      wall.Like({}, { fromBlock: state.blockNumber + 1 }, (error, event) => {
+        console.log('like', error, event);
+        if (error) throw error;
+        commit('setBlockNumber', event.blockNumber);
+        const { transactionHash, account, amount, createdAt } = event.args;
+        commit('likeRecord', {
+          id: event.transactionHash,
+          recordId: transactionHash,
+          supporterAddress: account,
+          amount: +amount.shift(-decimals),
+          createdAt: createdAt * 1000,
+        });
+      });
     },
-    likeRecord({ commit, state }, { recordId, revenue }) {
-      commit('likeRecord', { recordId, supporterAddress: state.address, revenue });
+    async init({ state, commit, dispatch }) {
+      window.addEventListener('load', async () => {
+        if (window.parent.web3) {
+          web3.setProvider(window.parent.web3.currentProvider);
+        }
+
+        web3.version.getNetwork((err, networkId) => {
+          console.log('network id', networkId);
+          console.log('wall contract address', WallMeta.networks[networkId].address);
+          wall = web3.eth.contract(WallMeta.abi).at(WallMeta.networks[networkId].address);
+          console.log('wall', wall);
+
+          dispatch('fetchLastEvents');
+          setInterval(() => dispatch('fetchLastEvents'), 60 * 1000);
+        });
+
+        setInterval(() => {
+          web3.eth.getAccounts(async (error, accounts) => {
+            const account = accounts[0];
+            if (account === state.account) return;
+            commit('setAccount', error || !account ? null : account);
+          });
+        }, 500);
+      });
+    },
+    createRecord({ state, dispatch }, { title, body }) {
+      return new Promise((resolve, reject) =>
+        wall.store([title, body].join('\n'), { from: state.account }, (error, result) => {
+          if (error) reject(error);
+          else {
+            resolve(result);
+            dispatch('fetchLastEvents');
+          }
+        }));
+    },
+    likeRecord({ state, dispatch }, { recordId: transactionHash, revenue: amount }) {
+      return new Promise((resolve, reject) =>
+        wall.like(transactionHash, (new BigNumber(amount)).shift(decimals),
+          { from: state.account }, (error, result) => {
+            if (error) reject(error);
+            else {
+              resolve(result);
+              dispatch('fetchLastEvents');
+            }
+          }));
     },
   },
 };

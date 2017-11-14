@@ -60,14 +60,14 @@
       ...mapMutations({
         closeHandler: 'toggleCreateRecordModal',
       }),
-      createRecord() {
-        this.$validator.validateAll().then((valid) => {
-          if (!valid) return;
-          const { title, body } = this;
-          this.$store.dispatch('createRecord', { title, body });
-          Object.assign(this, { title: '', body: '' });
-          this.$router.push({ name: 'record-list', params: { sort: 'newest' } });
-        });
+      async createRecord() {
+        const valid = await this.$validator.validateAll();
+        if (!valid) return;
+        const { title, body } = this;
+        await this.$store.dispatch('createRecord', { title, body });
+        Object.assign(this, { title: '', body: '' });
+        this.$router.push({ name: 'record-list', params: { sort: 'newest' } });
+        this.closeHandler();
       },
     },
   };

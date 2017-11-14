@@ -26,6 +26,9 @@
   import SupportAuthorModal from './components/SupportModal';
 
   export default {
+    beforeCreate() {
+      this.$store.dispatch('init');
+    },
     components: {
       AeMain,
       AeHeader,

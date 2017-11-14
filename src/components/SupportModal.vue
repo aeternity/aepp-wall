@@ -41,9 +41,10 @@
       closeHandler() {
         this.$store.commit('showSupportModalForRecord');
       },
-      likeRecord() {
+      async likeRecord() {
         const { recordId, revenue } = this;
-        this.$store.dispatch('likeRecord', { recordId, revenue: +revenue });
+        await this.$store.dispatch('likeRecord', { recordId, revenue: +revenue });
+        this.closeHandler();
       },
     },
   };
