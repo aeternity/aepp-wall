@@ -14,9 +14,17 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "@aeternity/aepp-components": "0.0.1",
+    "babel-runtime": "^6.26.0",
+    "font-awesome": "^4.7.0",
+    "format-number": "^3.0.0",
+    "vee-validate": "^2.0.0-rc.21",
     "vue": "^2.4.2",
+    "vue-focus": "^2.1.0",
+    "vue-moment": "^2.2.0",
     "vue-router": "^2.7.0",
-    "vuex": "^3.0.0"
+    "vuex": "^3.0.0",
+    "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
