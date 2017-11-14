@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
+import Promise from 'bluebird';
 import WallMeta from '../../../truffle/build/contracts/Wall.json';
 
 const decimals = 18;
@@ -103,6 +104,8 @@ export default {
           console.log('network id', networkId);
           console.log('wall contract address', WallMeta.networks[networkId].address);
           wall = web3.eth.contract(WallMeta.abi).at(WallMeta.networks[networkId].address);
+          wall.storeAsync = Promise.promisify(wall.store);
+          wall.likeAsync = Promise.promisify(wall.like);
           console.log('wall', wall);
 
           dispatch('fetchLastEvents');
@@ -118,26 +121,16 @@ export default {
         }, 500);
       });
     },
-    createRecord({ state, dispatch }, { title, body }) {
-      return new Promise((resolve, reject) =>
-        wall.store([title, body].join('\n'), { from: state.account }, (error, result) => {
-          if (error) reject(error);
-          else {
-            resolve(result);
-            dispatch('fetchLastEvents');
-          }
-        }));
+    async createRecord({ state, dispatch }, { title, body }) {
+      const result = await wall.storeAsync([title, body].join('\n'), { from: state.account });
+      dispatch('fetchLastEvents');
+      return result;
     },
-    likeRecord({ state, dispatch }, { recordId: transactionHash, revenue: amount }) {
-      return new Promise((resolve, reject) =>
-        wall.like(transactionHash, (new BigNumber(amount)).shift(decimals),
-          { from: state.account }, (error, result) => {
-            if (error) reject(error);
-            else {
-              resolve(result);
-              dispatch('fetchLastEvents');
-            }
-          }));
+    async likeRecord({ state, dispatch }, { recordId: transactionHash, revenue: amount }) {
+      const result = await wall.likeAsync(transactionHash,
+        (new BigNumber(amount)).shift(decimals), { from: state.account });
+      dispatch('fetchLastEvents');
+      return result;
     },
   },
 };

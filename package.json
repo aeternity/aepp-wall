@@ -17,6 +17,7 @@
     "@aeternity/aepp-components": "0.0.1",
     "babel-runtime": "^6.26.0",
     "bignumber.js": "^4.1.0",
+    "bluebird": "^3.5.1",
     "font-awesome": "^4.7.0",
     "format-number": "^3.0.0",
     "vee-validate": "^2.0.0-rc.21",
