@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
+import IPFS from 'ipfs-mini';
 import Promise from 'bluebird';
 import WallMeta from '../../../truffle/build/contracts/Wall.json';
 
@@ -18,7 +19,11 @@ const defaultRecord = () => ({
   createdAt: 0,
 });
 const web3 = new Web3();
+const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 let wall;
+
+ipfs.addJSONAsync = Promise.promisify(ipfs.addJSON);
+ipfs.catJSONAsync = Promise.promisify(ipfs.catJSON);
 
 export default {
   state: () => ({
@@ -66,17 +71,15 @@ export default {
 
   actions: {
     async fetchLastEvents({ state, commit }) {
-      wall.Store({}, { fromBlock: state.blockNumber + 1 }, (error, event) => {
+      wall.Store({}, { fromBlock: state.blockNumber + 1 }, async (error, event) => {
         console.log('store', error, event);
         if (error) throw error;
         commit('setBlockNumber', event.blockNumber);
         const { transactionHash, args: { account, content, createdAt } } = event;
-        const p = content.indexOf('\n');
         commit('setRecord', {
+          ...await ipfs.catJSONAsync(content),
           id: transactionHash,
           author: account,
-          title: content.slice(0, p),
-          body: content.slice(p + 1),
           createdAt: createdAt * 1000,
         });
       });
@@ -122,7 +125,8 @@ export default {
       });
     },
     async createRecord({ state, dispatch }, { title, body }) {
-      const result = await wall.storeAsync([title, body].join('\n'), { from: state.account });
+      const multiHash = await ipfs.addJSONAsync({ title, body });
+      const result = await wall.storeAsync(multiHash, { from: state.account });
       dispatch('fetchLastEvents');
       return result;
     },
