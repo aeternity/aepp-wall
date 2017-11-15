@@ -1,7 +1,7 @@
 <template>
   <ae-panel
     :to="{ name: 'record', params: { id: this.record.id } }"
-    showUnderline
+    :ratioBottom="1"
   >
     <div class="record-list-item">
       <div class="content">
