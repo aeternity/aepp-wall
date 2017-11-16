@@ -13,6 +13,11 @@ Vue.use(VeeValidate);
 Vue.config.productionTip = false;
 sync(store, router);
 
+router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0);
+  next();
+});
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
