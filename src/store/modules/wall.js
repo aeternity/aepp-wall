@@ -114,6 +114,8 @@ export default {
           web3.setProvider(idManager.web3.currentProvider);
         } else if (window.parent.web3) {
           web3.setProvider(window.parent.web3.currentProvider);
+        } else {
+          web3.setProvider(new Web3.providers.HttpProvider('https://kovan.infura.io'));
         }
 
         wallAddress = '0xe5c7ab141e6d8a9866cf0176907497b82ae58f48';
