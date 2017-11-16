@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import IPFS from 'ipfs-mini';
 import Bluebird from 'bluebird';
 import WallMeta from '../../../truffle/build/contracts/Wall.json';
+import ERC20Meta from '../../../truffle/build/contracts/ERC20.json';
 
 const decimals = 18;
 const defaultRecord = () => ({
@@ -21,6 +22,8 @@ const defaultRecord = () => ({
 const web3 = new Web3();
 const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 let wall;
+let wallAddress;
+let erc20;
 
 ipfs.addJSONAsync = Bluebird.promisify(ipfs.addJSON);
 ipfs.catJSONAsync = Bluebird.promisify(ipfs.catJSON);
@@ -79,6 +82,7 @@ export default {
             author,
             createdAt: createdAt * 1000,
           });
+          return null;
         }),
         ...(new Array(recordsCount)).fill().map(async (_, recordId) => {
           const fetchedLikeCount = records[recordId] ? records[recordId].likeIds.size : 0;
@@ -94,7 +98,9 @@ export default {
               amount: +(new BigNumber(amount)).shift(-decimals),
               createdAt: createdAt * 1000,
             });
+            return null;
           }));
+          return null;
         }),
       ]);
     },
@@ -104,8 +110,9 @@ export default {
           web3.setProvider(window.parent.web3.currentProvider);
         }
 
-        const networkId = await web3.eth.net.getId();
-        wall = new web3.eth.Contract(WallMeta.abi, WallMeta.networks[networkId].address);
+        wallAddress = '0xe5c7ab141e6d8a9866cf0176907497b82ae58f48';
+        wall = new web3.eth.Contract(WallMeta.abi, wallAddress);
+        erc20 = new web3.eth.Contract(ERC20Meta.abi, '0x35d8830ea35e6Df033eEdb6d5045334A4e34f9f9');
 
         dispatch('fetchNewRecordsAndLikes');
         setInterval(() => dispatch('fetchNewRecordsAndLikes'), 60 * 1000);
@@ -125,10 +132,13 @@ export default {
       promiEvent.on('receipt', () => { dispatch('fetchNewRecordsAndLikes'); });
       await promiEvent;
     },
-    async likeRecord({ state, dispatch }, { recordId: transactionHash, revenue: amount }) {
-      const promiEvent = wall.methods
-        .like(transactionHash, (new BigNumber(amount)).shift(decimals))
-        .send({ from: state.account });
+    async likeRecord({ state, dispatch }, { recordId, revenue: amount }) {
+      const encodeUint256 = uint256 => web3.eth.abi.encodeParameter('uint256', uint256);
+      const promiEvent = erc20.methods.approveAndCall(
+        wallAddress,
+        (new BigNumber(amount)).shift(decimals),
+        encodeUint256(32 * 4) + encodeUint256(32).slice(2) + encodeUint256(recordId).slice(2),
+      ).send({ from: state.account });
       promiEvent.on('receipt', () => dispatch('fetchNewRecordsAndLikes'));
       await promiEvent;
     },
