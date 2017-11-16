@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@aeternity/aepp-components": "0.0.1",
+    "@aeternity/id-manager-provider": "0.0.5",
     "babel-runtime": "^6.26.0",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",

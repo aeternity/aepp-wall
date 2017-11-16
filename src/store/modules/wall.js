@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 import IPFS from 'ipfs-mini';
 import Bluebird from 'bluebird';
+import IdManagerProvider from '@aeternity/id-manager-provider';
 import WallMeta from '../../../truffle/build/contracts/Wall.json';
 import ERC20Meta from '../../../truffle/build/contracts/ERC20.json';
 
@@ -24,6 +25,9 @@ const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 let wall;
 let wallAddress;
 let erc20;
+const idManager = new IdManagerProvider({
+  skipSecurity: process.env.NODE_ENV === 'development',
+});
 
 ipfs.addJSONAsync = Bluebird.promisify(ipfs.addJSON);
 ipfs.catJSONAsync = Bluebird.promisify(ipfs.catJSON);
@@ -106,7 +110,9 @@ export default {
     },
     async init({ state, commit, dispatch }) {
       window.addEventListener('load', async () => {
-        if (window.parent.web3) {
+        if (await idManager.checkIdManager()) {
+          web3.setProvider(idManager.web3.currentProvider);
+        } else if (window.parent.web3) {
           web3.setProvider(window.parent.web3.currentProvider);
         }
 
