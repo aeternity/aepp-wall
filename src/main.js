@@ -9,7 +9,16 @@ import router from './router';
 import store from './store';
 
 Vue.use(VueMoment);
-Vue.use(VeeValidate);
+Vue.use(VeeValidate, {
+  dictionary: {
+    en: {
+      messages: {
+        required: 'This field is required',
+        max: (field, [length]) => `This field may not be greater than ${length} characters`,
+      },
+    },
+  },
+});
 Vue.config.productionTip = false;
 sync(store, router);
 

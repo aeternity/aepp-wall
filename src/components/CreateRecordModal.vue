@@ -1,39 +1,25 @@
 <template>
   <ae-modal v-if="visible" title="Create Message" @close="closeHandler">
     <form class="create-record-modal" @submit.prevent="createRecord">
-      <label :for="`${_uid}-title`">
-        Title
-        <span class="help" :class="{ danger: errors.has('title') }">
-          {{errors.first('title')}}
-        </span>
-      </label>
-      <input
-        placeholder="Enter catchy headline …"
-        name="title"
-        :id="`${_uid}-title`"
-        v-model="title"
-        v-focus.lazy="true"
-        v-validate="'required'"
-        :class="{ danger: errors.has('title') }"
-      />
-
-      <label :for="`${_uid}-body`">
-        Body
-        <span class="help" :class="{ danger: errors.has('body') }">
-          {{errors.first('body')}}
+      <label :for="`${_uid}`">
+        Message
+        <span class="help" :class="{ danger: errors.has('message') }">
+          {{errors.first('message')}}
         </span>
       </label>
       <textarea
-        placeholder="Write your message …"
-        name="body"
-        :id="`${_uid}-body`"
-        v-model="body"
-        v-validate="'required'"
-        :class="{ danger: errors.has('body') }"
+        placeholder="Express yourself…"
+        name="message"
+        :id="`${_uid}`"
+        v-model="message"
+        v-validate="'required|max:300'"
+        :class="{ danger: errors.has('message') }"
       />
+      <text-muted :style="{ visibility: message.length <= 300 ? 'visible' : 'hidden' }" small>
+        Characters left: {{300 - message.length}}
+      </text-muted>
 
       <ae-header-button>Create message</ae-header-button>
-      <text-muted small center>character count: {{body.length}}</text-muted>
     </form>
   </ae-modal>
 </template>
@@ -46,10 +32,7 @@
 
   export default {
     data() {
-      return {
-        title: '',
-        body: '',
-      };
+      return { message: '' };
     },
     components: { AeModal, TextMuted, AeHeaderButton },
     directives: { focus },
@@ -63,9 +46,8 @@
       async createRecord() {
         const valid = await this.$validator.validateAll();
         if (!valid) return;
-        const { title, body } = this;
-        await this.$store.dispatch('createRecord', { title, body });
-        Object.assign(this, { title: '', body: '' });
+        await this.$store.dispatch('createRecord', this.message);
+        this.message = '';
         this.$router.push({ name: 'record-list', params: { sort: 'newest' } });
         this.closeHandler();
       },
@@ -77,18 +59,13 @@
   @import '~@aeternity/aepp-components/dist/variables.scss';
 
   .create-record-modal {
-    > * {
-      margin: 10px 0;
-    }
-
     label {
       text-transform: uppercase;
       font-weight: 500;
       margin-top: 25px;
-      margin-bottom: 10px;
 
       .help {
-        font-size: 16px;
+        font-size: 13px;
         float: right;
         text-transform: none;
 
@@ -102,7 +79,7 @@
       display: block;
     }
     input, textarea {
-      padding: 26px;
+      padding: 13px;
       border-radius: 10px;
       font-size: 16px;
       line-height: 26px;
@@ -110,6 +87,7 @@
       box-shadow: none;
       width: 100%;
       box-sizing: border-box;
+      margin: 10px 0;
 
       ::placeholder {
         color: $grey;
@@ -123,13 +101,17 @@
       height: 44px;
     }
     textarea {
-      min-height: 200px;
+      min-height: 170px;
+    }
+
+    .text-muted {
+      display: block;
+      text-align: right;
     }
 
     .ae-header-button {
       display: block;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 25px auto;
     }
   }
 </style>

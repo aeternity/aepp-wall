@@ -1,24 +1,25 @@
 <template>
   <ae-panel v-if="record" :closeHandler="close">
     <div class="record-detail">
-      <span class="author">by {{record.author.slice(0, 8)}}</span>
-      <h2>{{record.title}}</h2>
+      <span class="author">by {{record.author.slice(0, 8)}}...</span>
+      <article>{{record.body}}</article>
       <text-muted>{{record.createdAt | moment('calendar')}}</text-muted>
-      <ae-hr />
-      {{record.body}}
       <ae-hr branded />
       <record-statistic largeFont :record="record" />
-      <ae-hr-button @click="toggleSupporters">
+      <ae-hr-button v-if="record.lastSupporters.length" @click="toggleSupporters">
         {{supportersVisible ? 'Hide' : 'Show'}} supporters
       </ae-hr-button>
       <table v-if="supportersVisible">
         <tr v-for="supporter in record.lastSupporters">
-          <td>{{supporter.address.slice(0, 8)}}</td>
+          <td>{{supporter.address.slice(0, 8)}}...</td>
           <td><text-muted>{{supporter.createdAt | moment('calendar')}}</text-muted></td>
           <td>{{supporter.amount}} Æ</td>
         </tr>
       </table>
-      <ae-header-button @click="showSupportModal">Support Author</ae-header-button>
+      <ae-header-button @click="showSupportModal">
+        <img :src="require('../assets/emoticon-support.png')" />
+        Support Author
+      </ae-header-button>
     </div>
   </ae-panel>
   <p v-else>This wall record seems to be missing.</p>
@@ -84,6 +85,12 @@
       font-weight: 500;
     }
 
+    article {
+      font-size: 20px;
+      margin-top: 30px;
+      line-height: 28px;
+    }
+
     .proposal-secondary {
       text-align: center;
       margin-bottom: 46px;
@@ -121,7 +128,13 @@
 
     .ae-header-button {
       margin: 35px auto 0 auto;
-      display: block;
+      display: flex;
+      align-items: center;
+
+      img {
+        height: 24px;
+        margin-right: 15px;
+      }
     }
 
     @media (max-width: $container-width) {

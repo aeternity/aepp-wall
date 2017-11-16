@@ -5,7 +5,7 @@
   >
     <div class="record-list-item">
       <div class="content">
-        <h2>{{record.title}}</h2>
+        <h2>{{record.body}}</h2>
         <text-muted>{{record.createdAt | moment('calendar')}}</text-muted>
         <record-statistic :record="record" />
       </div>
@@ -39,9 +39,9 @@
 
       h2 {
         margin: 0;
-        font-size: 24px;
-        line-height: 28px;
-        font-weight: bold;
+        font-size: 18px;
+        line-height: 26px;
+        font-weight: normal;
       }
 
       h2 + .text-muted {

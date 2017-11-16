@@ -134,8 +134,8 @@ export default {
         }, 500);
       });
     },
-    async createRecord({ state, dispatch }, { title, body }) {
-      const multiHash = await ipfs.addJSONAsync({ title, body });
+    async createRecord({ state, dispatch }, message) {
+      const multiHash = await ipfs.addJSONAsync({ body: message });
       const promiEvent = wall.methods.store(multiHash).send({ from: state.account });
       promiEvent.on('receipt', () => { dispatch('fetchNewRecordsAndLikes'); });
       await promiEvent;

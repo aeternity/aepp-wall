@@ -1,7 +1,7 @@
 <template>
-  <ae-modal v-if="recordId" title="Confirm Transaction" @close="closeHandler">
+  <ae-modal v-if="recordId" title="Support Author" @close="closeHandler">
     <form class="create-record-modal" @submit.prevent="likeRecord">
-      <div class="icon" />
+      <img class="icon" :src="require('../assets/icon-message.svg')" />
 
       <h2>
         Message Wall
@@ -11,10 +11,13 @@
       <ae-amount v-model="revenue" :min="0" />
 
       <text-muted small center>
-        To support the message more, you can change the amount of the transaction.
+        Choose the amount of Æ with which you want to support the author
       </text-muted>
 
-      <ae-header-button>Make transaction</ae-header-button>
+      <ae-header-button>
+        <img :src="require('../assets/emoticon-transaction.png')" />
+        Support
+      </ae-header-button>
     </form>
   </ae-modal>
 </template>
@@ -29,7 +32,7 @@
   export default {
     data() {
       return {
-        revenue: 0.5,
+        revenue: 1,
       };
     },
     components: { AeModal, AeHeaderButton, AeAmount, TextMuted },
@@ -59,12 +62,15 @@
     }
 
     .icon {
+      display: block;
       margin: 40px auto 13px auto;
       background-color: $white;
       width: 64px;
       height: 64px;
       border-radius: 12px;
       box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+      box-sizing: border-box;
+      padding: 10px;
     }
 
     h2 {
@@ -88,10 +94,14 @@
     }
 
     .ae-header-button {
-      display: block;
-      margin-top: 92px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 92px auto 0 auto;
+      display: flex;
+      align-items: center;
+
+      img {
+        height: 24px;
+        margin-right: 15px;
+      }
     }
   }
 </style>
