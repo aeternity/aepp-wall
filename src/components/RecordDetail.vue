@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import { AePanel, AeHeaderButton, AeHr, AeHrButton } from '@aeternity/aepp-components';
+  import { AePanel, AeHeaderButton, AeHr, AeHrButton } from 'aepp-components-davidyuk';
   import TextMuted from './TextMuted';
   import RecordStatistic from './RecordStatistic';
 
@@ -59,7 +59,7 @@
 
 <style lang="scss" scoped>
   @import url('https://fonts.googleapis.com/css?family=Roboto+Mono:500');
-  @import '~@aeternity/aepp-components/dist/variables.scss';
+  @import '~aepp-components-davidyuk/dist/variables.scss';
 
   .record-detail {
     padding: 0 110px;
@@ -153,7 +153,7 @@
 </style>
 
 <style lang="scss">
-  @import '~@aeternity/aepp-components/dist/variables.scss';
+  @import '~aepp-components-davidyuk/dist/variables.scss';
 
   .record-detail {
     .space-around {

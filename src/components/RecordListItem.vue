@@ -17,7 +17,7 @@
 </template>
 
 <script>
-  import { AePanel } from '@aeternity/aepp-components';
+  import { AePanel } from 'aepp-components-davidyuk';
   import TextMuted from './TextMuted';
   import RecordStatistic from './RecordStatistic';
 
@@ -28,7 +28,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '~@aeternity/aepp-components/dist/variables.scss';
+  @import '~aepp-components-davidyuk/dist/variables.scss';
 
   .record-list-item {
     display: flex;

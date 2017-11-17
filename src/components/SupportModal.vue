@@ -26,7 +26,7 @@
   import { mapState } from 'vuex';
   import { focus } from 'vue-focus';
 
-  import { AeModal, AeHeaderButton, AeAmount } from '@aeternity/aepp-components';
+  import { AeModal, AeHeaderButton, AeAmount } from 'aepp-components-davidyuk';
   import TextMuted from './TextMuted';
 
   export default {
@@ -54,7 +54,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '~@aeternity/aepp-components/dist/variables.scss';
+  @import '~aepp-components-davidyuk/dist/variables.scss';
 
   .create-record-modal {
     > * {

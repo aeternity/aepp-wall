@@ -26,7 +26,7 @@
   import { mapState, mapMutations } from 'vuex';
   import {
     AeMain, AeHeader, AeHeaderButton, AeHeaderAlert, AeAddButton,
-  } from '@aeternity/aepp-components';
+  } from 'aepp-components-davidyuk';
   import CreateRecordModal from './components/CreateRecordModal';
   import SupportAuthorModal from './components/SupportModal';
 

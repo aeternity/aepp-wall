@@ -24,7 +24,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '~@aeternity/aepp-components/dist/variables.scss';
+  @import '~aepp-components-davidyuk/dist/variables.scss';
 
   .record-statistic {
     margin-top: 20px;
