@@ -29,7 +29,7 @@
       return {
         sorts: {
           newest: (a, b) => b.createdAt - a.createdAt,
-          'highest revenue': (a, b) => b.revenue - a.revenue,
+          'highest support': (a, b) => b.revenue - a.revenue,
           'most supporters': (a, b) => b.supporters.size - a.supporters.size,
         },
       };
