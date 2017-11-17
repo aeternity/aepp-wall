@@ -37,6 +37,7 @@ export default {
     account: null,
     createRecordModalShown: false,
     supportModalRecord: false,
+    alert: '',
 
     records: {},
   }),
@@ -50,6 +51,9 @@ export default {
     },
     showSupportModalForRecord(state, address) {
       state.supportModalRecord = address;
+    },
+    setAlert(state, alert) {
+      state.alert = alert;
     },
     setRecord(state, record) {
       Vue.set(state.records, record.id, {
@@ -72,6 +76,12 @@ export default {
   },
 
   actions: {
+    setAlert({ commit }, options) {
+      window.scrollTo(0, 0);
+      const { text, autoClose } = options.text ? options : { text: options };
+      commit('setAlert', text);
+      if (autoClose) setTimeout(() => commit('setAlert'), 3000);
+    },
     async fetchNewRecordsAndLikes({ state: { records }, commit }) {
       const fetchedRecordsCount = Object.keys(records).length;
       const recordsCount = +await wall.methods.recordCount().call();
@@ -139,6 +149,10 @@ export default {
       const promiEvent = wall.methods.store(multiHash).send({ from: state.account });
       promiEvent.on('receipt', () => { dispatch('fetchNewRecordsAndLikes'); });
       await promiEvent;
+      dispatch('setAlert', {
+        text: '✓ Your message was send',
+        autoClose: true,
+      });
     },
     async likeRecord({ state, dispatch }, { recordId, revenue: amount }) {
       const encodeUint256 = uint256 => web3.eth.abi.encodeParameter('uint256', uint256);
@@ -149,6 +163,10 @@ export default {
       ).send({ from: state.account });
       promiEvent.on('receipt', () => dispatch('fetchNewRecordsAndLikes'));
       await promiEvent;
+      dispatch('setAlert', {
+        text: '✓ Your support was send',
+        autoClose: true,
+      });
     },
   },
 };

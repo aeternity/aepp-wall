@@ -1,6 +1,9 @@
 <template>
   <ae-main>
-    <ae-header name="Message Wall">
+    <ae-header-alert v-if="alert" @close="closeAlert">
+      {{alert}}
+    </ae-header-alert>
+    <ae-header v-else name="Message Wall">
       <ae-header-button @click="toggleCreateRecordModal()">
         <i class="fa fa-plus" /> Create New
       </ae-header-button>
@@ -20,8 +23,10 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex';
-  import { AeMain, AeHeader, AeHeaderButton, AeAddButton } from '@aeternity/aepp-components';
+  import { mapState, mapMutations } from 'vuex';
+  import {
+    AeMain, AeHeader, AeHeaderButton, AeHeaderAlert, AeAddButton,
+  } from '@aeternity/aepp-components';
   import CreateRecordModal from './components/CreateRecordModal';
   import SupportAuthorModal from './components/SupportModal';
 
@@ -33,13 +38,22 @@
       AeMain,
       AeHeader,
       AeHeaderButton,
+      AeHeaderAlert,
       AeAddButton,
       CreateRecordModal,
       SupportAuthorModal,
     },
-    methods: mapMutations({
-      toggleCreateRecordModal: 'toggleCreateRecordModal',
+    computed: mapState({
+      alert: state => state.wall.alert,
     }),
+    methods: {
+      ...mapMutations({
+        toggleCreateRecordModal: 'toggleCreateRecordModal',
+      }),
+      closeAlert() {
+        this.$store.commit('setAlert');
+      },
+    },
   };
 </script>
 
