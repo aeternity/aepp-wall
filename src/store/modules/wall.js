@@ -144,28 +144,42 @@ export default {
         }, 500);
       });
     },
-    async createRecord({ state, dispatch }, message) {
+    async createRecord({ state, commit, dispatch }, message) {
       const multiHash = await ipfs.addJSONAsync({ body: message });
-      const promiEvent = wall.methods.store(multiHash).send({ from: state.account });
-      promiEvent.on('receipt', () => { dispatch('fetchNewRecordsAndLikes'); });
-      await promiEvent;
+      await new Promise((resolve, reject) =>
+        wall.methods.store(multiHash).send({ from: state.account })
+          .on('transactionHash', resolve).on('error', reject));
       dispatch('setAlert', {
         text: '✓ Your message was send',
         autoClose: true,
       });
+      commit('setRecord', {
+        body: message,
+        id: Object.keys(state.records).length,
+        author: state.account,
+        createdAt: Date.now(),
+      });
     },
-    async likeRecord({ state, dispatch }, { recordId, revenue: amount }) {
+    async likeRecord({ state, commit, dispatch }, { recordId, revenue: amount }) {
       const encodeUint256 = uint256 => web3.eth.abi.encodeParameter('uint256', uint256);
-      const promiEvent = erc20.methods.approveAndCall(
-        wallAddress,
-        (new BigNumber(amount)).shift(decimals),
-        encodeUint256(32 * 4) + encodeUint256(32).slice(2) + encodeUint256(recordId).slice(2),
-      ).send({ from: state.account });
-      promiEvent.on('receipt', () => dispatch('fetchNewRecordsAndLikes'));
-      await promiEvent;
+      await new Promise((resolve, reject) =>
+        erc20.methods.approveAndCall(
+          wallAddress,
+          (new BigNumber(amount)).shift(decimals),
+          encodeUint256(32 * 4) + encodeUint256(32).slice(2) + encodeUint256(recordId).slice(2),
+        )
+          .send({ from: state.account })
+          .on('transactionHash', resolve).on('error', reject));
       dispatch('setAlert', {
         text: '✓ Your support was send',
         autoClose: true,
+      });
+      commit('likeRecord', {
+        id: state.records[recordId].likeIds.size,
+        recordId,
+        supporterAddress: state.account,
+        amount,
+        createdAt: Date.now(),
       });
     },
   },
