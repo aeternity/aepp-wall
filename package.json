@@ -15,7 +15,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs truffle"
   },
   "dependencies": {
-    "@aeternity/id-manager-provider": "0.0.7",
+    "@aeternity/id-manager-provider": "0.0.8",
     "aepp-components-davidyuk": "0.0.3",
     "babel-runtime": "^6.26.0",
     "bignumber.js": "^4.1.0",
