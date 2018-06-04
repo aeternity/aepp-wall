@@ -11,7 +11,7 @@
     "build": "npm run build-contracts && node build/build.js",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
-    "test": "npm run unit && npm run e2e",
+    "test": "npm run build-contracts && npm run lint",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs truffle"
   },
   "dependencies": {
