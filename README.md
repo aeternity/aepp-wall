@@ -1,3 +1,6 @@
+## This repository has been archived on 20.02.2023
+The reason for the retirement is that the code is not used anymore.
+
 # Æternity wall app
 
 The wall app lets users interact with the corresponding wall smart contract,
